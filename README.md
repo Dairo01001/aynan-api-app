@@ -1,98 +1,174 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# aynan-api-app
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API backend built with **NestJS**, **Prisma (PostgreSQL)** and **JWT auth**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+> ✅ This repo includes a working Postgres Docker compose setup, Prisma migrations + seed script, and a minimal auth/user/role module.
 
-## Description
+---
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 🧱 What’s inside
 
-## Project setup
+- NestJS (v11) REST API
+- PostgreSQL database (via Docker or local PG)
+- Prisma ORM with migrations + generated client
+- Basic authentication (JWT + roles)
+- Swagger UI (`/api`) for API exploration
 
-```bash
-$ pnpm install
-```
+---
 
-## Compile and run the project
+## 🛠️ Prerequisites
+
+- **Node.js** (v18+ recommended)
+- **pnpm** (preferred package manager)
+- **Docker** (optional, but recommended for local Postgres)
+
+---
+
+## 🚀 Quickstart (recommended)
+
+### 1) Install dependencies
 
 ```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+pnpm install
 ```
 
-## Run tests
+### 2) Start the database (Docker)
 
 ```bash
-# unit tests
-$ pnpm run test
-
-# e2e tests
-$ pnpm run test:e2e
-
-# test coverage
-$ pnpm run test:cov
+docker compose up -d
 ```
 
-## Deployment
+The compose setup exposes Postgres on **localhost:5432** with:
+- user: `postgres`
+- password: `0000`
+- database: `test`
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+> If you prefer using a local Postgres instance, set `DATABASE_URL` accordingly in `.env`.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 3) Configure environment variables
+
+Copy the existing `.env` if you want to keep it as a template:
 
 ```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+cp .env .env.local
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Required env vars (with sensible defaults in the repo):
 
-## Resources
+- `DATABASE_URL` (already set in `.env` for the docker-compose setup)
+- `JWT_SECRET` (used by auth module)
+- `PORT` (optional, defaults to `3000`)
 
-Check out a few resources that may come in handy when working with NestJS:
+Example (in `.env.local`):
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```env
+DATABASE_URL=postgresql://postgres:0000@localhost:5432/test
+JWT_SECRET=super-secret-key
+PORT=3000
+```
 
-## Support
+### 4) Run Prisma migrations + seed data
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```bash
+pnpm prisma migrate dev
+pnpm prisma db seed
+```
 
-## Stay in touch
+> If you already have the database schema in sync but need to refresh the generated client (e.g., after changing `prisma/schema.prisma`), run:
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```bash
+pnpm prisma generate
+```
 
-## License
+This will create the required tables and insert an initial admin user.
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+📝 Default seeded admin credentials:
+- **username:** `admin`
+- **password:** `admin1234`
+
+---
+
+## ▶️ Run the server
+
+```bash
+pnpm run start:dev
+```
+
+The server will start on `http://localhost:3000` (or the port set in `PORT`).
+
+✅ Swagger API docs available at: `http://localhost:3000/api`
+
+---
+
+## 🧪 Tests
+
+```bash
+pnpm run test
+pnpm run test:e2e
+pnpm run test:cov
+```
+
+---
+
+## 🧭 Project structure (key folders)
+
+- `src/` – main application code
+  - `auth/` – authentication (JWT) + login endpoint
+  - `users/` – user CRUD + password hashing
+  - `roles/` – roles CRUD
+  - `prisma/` – Prisma service + exception filter
+- `prisma/` – schema, migrations, and seed script
+
+---
+
+## 🧩 Common development commands
+
+- `pnpm run lint` – run ESLint + auto-fix
+- `pnpm run format` – run Prettier on `.ts` files
+- `pnpm run build` – build for production (outputs to `dist/`)
+- `pnpm run start:prod` – run the built app
+
+---
+
+## 🔒 Auth (JWT)
+
+The authentication system uses a JWT issued by `/auth/login`.
+
+### Login
+
+- `POST /auth/login`
+
+Payload example:
+
+```json
+{
+  "username": "admin",
+  "password": "admin1234"
+}
+```
+
+It returns a JWT you can use in the `Authorization: Bearer <token>` header.
+
+---
+
+## 📌 Notes
+
+- The project uses Prisma’s **PostgreSQL adapter** (`@prisma/adapter-pg`), which requires `DATABASE_URL` to be a `postgresql://` URI.
+- If you update `prisma/schema.prisma`, run `pnpm prisma migrate dev` to generate a new migration and update the client.
+
+---
+
+## ✅ Next steps for a new developer
+
+1. Start the dev server: `pnpm run start:dev`
+2. Open Swagger docs: `http://localhost:3000/api`
+3. Explore existing controllers: `src/users`, `src/roles`, `src/auth`
+4. Add new endpoints and update Prisma schema as needed
+
+---
+
+## 🧠 Helpful links
+
+- NestJS docs: https://docs.nestjs.com
+- Prisma docs: https://www.prisma.io/docs
+- Swagger UI: https://swagger.io/docs/
