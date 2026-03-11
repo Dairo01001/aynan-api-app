@@ -3,7 +3,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from 'src/generated/prisma/client';
 import { Logger } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { roundsOfHashing } from 'src/users/users.service';
+import { roundsOfHashing } from 'src/modules/users/users.service';
 
 const connectionString = `${process.env.DATABASE_URL}`;
 const adapter = new PrismaPg({ connectionString });
