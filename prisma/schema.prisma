@@ -35,3 +35,69 @@ model User {
   role   Role   @relation(fields: [roleId], references: [id])
   roleId String @map("role_id")
 }
+
+model Eps {
+  id              String  @id @default(uuid())
+  code            String  @unique @db.VarChar(50)
+  taxId           String  @unique @map("tax_id") @db.VarChar(50)
+  legalName       String  @map("legal_name") @db.VarChar(255)
+  commercialName  String? @map("commercial_name") @db.VarChar(255)
+  portfolioEmail  String? @map("portfolio_email") @db.VarChar(255)
+  portfolioPhone  String? @map("portfolio_phone") @db.VarChar(20)
+  contactName     String? @map("contact_name") @db.VarChar(255)
+  contactPosition String? @map("contact_position") @db.VarChar(255)
+  paymentTermDays Int     @map("payment_term_days")
+  isActive        Boolean @default(true) @map("is_active")
+  createdById     String? @map("created_by")
+  updatedById     String? @map("updated_by")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  invoices Invoice[]
+}
+
+enum RegimeType {
+  CONTRIBUTIVO
+  SUBSIDIADO
+}
+
+enum InvoiceStatus {
+  PENDING
+  PAID
+  PARTIAL_PAID
+  TOTAL_DISPUTED
+  PARTIAL_DISPUTED
+  CANCELLED
+}
+
+model Invoice {
+  id            String        @id @default(uuid())
+  invoiceNumber String        @unique @map("invoice_number") @db.VarChar(50)
+  epsId         String        @map("eps_id")
+  issueDate     DateTime      @map("issue_date")
+  dueDate       DateTime      @map("due_date")
+  totalAmount   Decimal       @map("total_amount") @db.Decimal(18, 2)
+  copayment     Decimal       @map("copayment") @db.Decimal(18, 2)
+  moderatorFee  Decimal       @map("moderator_fee") @db.Decimal(18, 2)
+  netAmount     Decimal       @map("net_amount") @db.Decimal(18, 2)
+  billingPeriod String?       @map("billing_period") @db.VarChar(50)
+  regime_type   RegimeType    @map("regime_type")
+  filingNumber  String?       @map("filing_number") @db.VarChar(50)
+  filingDate    DateTime?     @map("filing_date")
+  status        InvoiceStatus @default(PENDING) @map("status")
+  dataSource    String        @map("data_source") @db.VarChar(50)
+  notes         String?       @map("notes") @db.Text
+  sourceFile    String?       @map("source_file") @db.VarChar(500)
+  isActive      Boolean       @default(true) @map("is_active")
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  createdById String? @map("created_by")
+  updatedById String? @map("updated_by")
+
+  eps Eps @relation(fields: [epsId], references: [id])
+}
