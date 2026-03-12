@@ -13,7 +13,7 @@ import {
 import { EpsService } from './eps.service';
 import { EpsEntity } from './entities/ep.entity';
 import { CreateEpDto } from './dto/create-ep.dto';
-import { UpdateEpDto } from './dto/update-ep.dto';
+import { UpdateEpsDto } from './dto/update-ep.dto';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -65,11 +65,11 @@ export class EpsController {
   @ApiOkResponse({ type: EpsEntity })
   async update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() updateEpDto: UpdateEpDto,
+    @Body() updateEpsDto: UpdateEpsDto,
   ) {
     const updatedEps = await this.epsService.updateEps({
       where: { id },
-      data: updateEpDto,
+      data: updateEpsDto,
     });
     return new EpsEntity(updatedEps);
   }

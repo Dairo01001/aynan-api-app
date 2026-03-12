@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateEpDto } from './dto/create-ep.dto';
-import { UpdateEpDto } from './dto/update-ep.dto';
+import { UpdateEpsDto } from './dto/update-ep.dto';
 import { Eps, Prisma } from 'src/generated/prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 
@@ -39,7 +39,7 @@ export class EpsService {
 
   updateEps(params: {
     where: Prisma.EpsWhereUniqueInput;
-    data: UpdateEpDto;
+    data: UpdateEpsDto;
   }): Promise<Eps> {
     const { where, data } = params;
     return this.prisma.eps.update({

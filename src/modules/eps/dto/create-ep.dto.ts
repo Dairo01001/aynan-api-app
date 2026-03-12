@@ -6,6 +6,7 @@ import {
   IsPhoneNumber,
   MinLength,
   IsInt,
+  IsOptional,
 } from 'class-validator';
 
 export class CreateEpDto {
@@ -28,28 +29,33 @@ export class CreateEpDto {
   legalName: string;
 
   @IsString()
+  @IsOptional()
   @MinLength(3)
-  @ApiProperty()
-  commercialName: string;
+  @ApiProperty({ required: false })
+  commercialName?: string;
 
   @IsString()
   @IsEmail()
-  @ApiProperty()
-  portfolioEmail: string;
+  @IsOptional()
+  @ApiProperty({ required: false })
+  portfolioEmail?: string;
 
   @IsString()
-  @IsPhoneNumber()
-  @ApiProperty()
-  portfolioPhone: string;
+  @IsOptional()
+  @IsPhoneNumber('CO')
+  @ApiProperty({ required: false })
+  portfolioPhone?: string;
 
   @IsString()
-  @ApiProperty()
-  contactName: string;
+  @IsOptional()
+  @ApiProperty({ required: false })
+  contactName?: string;
 
   @IsString()
+  @IsOptional()
   @MinLength(4)
-  @ApiProperty()
-  contactPosition: string;
+  @ApiProperty({ required: false })
+  contactPosition?: string;
 
   @IsInt()
   @IsNotEmpty()

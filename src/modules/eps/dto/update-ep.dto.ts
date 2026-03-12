@@ -1,8 +1,10 @@
-import { PartialType } from '@nestjs/swagger';
+import { ApiProperty, PartialType } from '@nestjs/swagger';
 import { CreateEpDto } from './create-ep.dto';
-import { IsBoolean } from 'class-validator';
+import { IsBoolean, IsOptional } from 'class-validator';
 
-export class UpdateEpDto extends PartialType(CreateEpDto) {
+export class UpdateEpsDto extends PartialType(CreateEpDto) {
   @IsBoolean()
-  isActive: boolean;
+  @IsOptional()
+  @ApiProperty({ required: false, default: true })
+  isActive?: boolean;
 }
