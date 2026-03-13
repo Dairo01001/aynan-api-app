@@ -1,34 +1,85 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+  ParseUUIDPipe,
+  NotFoundException,
+} from '@nestjs/common';
 import { EpsService } from './eps.service';
+import { EpsEntity } from './entities/ep.entity';
 import { CreateEpDto } from './dto/create-ep.dto';
-import { UpdateEpDto } from './dto/update-ep.dto';
+import { UpdateEpsDto } from './dto/update-ep.dto';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('eps')
+@ApiTags('Eps')
 export class EpsController {
-  constructor(private readonly epsService: EpsService) {}
+  constructor(private readonly epsService: EpsService) { }
 
   @Post()
-  create(@Body() createEpDto: CreateEpDto) {
-    return this.epsService.create(createEpDto);
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiCreatedResponse({ type: EpsEntity })
+  async create(@Body() createEpDto: CreateEpDto) {
+    const createdEps = await this.epsService.createEps(createEpDto);
+    return new EpsEntity(createdEps);
   }
 
   @Get()
-  findAll() {
-    return this.epsService.findAll();
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: [EpsEntity] })
+  async findAll() {
+    const eps = await this.epsService.findAllEps({
+      where: { isActive: true },
+    });
+    return eps.map((ep) => new EpsEntity(ep));
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.epsService.findOne(+id);
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: EpsEntity })
+  async findOne(@Param('id', ParseUUIDPipe) id: string) {
+    const eps = await this.epsService.findOneEps({ id });
+    if (!eps) {
+      throw new NotFoundException(`Eps with id ${id} not found`);
+    }
+    return new EpsEntity(eps);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEpDto: UpdateEpDto) {
-    return this.epsService.update(+id, updateEpDto);
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: EpsEntity })
+  async update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateEpsDto: UpdateEpsDto,
+  ) {
+    const updatedEps = await this.epsService.updateEps({
+      where: { id },
+      data: updateEpsDto,
+    });
+    return new EpsEntity(updatedEps);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.epsService.remove(+id);
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOkResponse({ type: EpsEntity })
+  async remove(@Param('id', ParseUUIDPipe) id: string) {
+    const deletedEps = await this.epsService.removeEps({ id });
+    return new EpsEntity(deletedEps);
   }
 }
