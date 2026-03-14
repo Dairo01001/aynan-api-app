@@ -8,8 +8,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class EpsService {
   constructor(private readonly prisma: PrismaService) { }
 
-  createEps(data: CreateEpDto): Promise<Eps> {
-    return this.prisma.eps.create({ data });
+  createEps(data: CreateEpDto, userId: string): Promise<Eps> {
+    return this.prisma.eps.create({
+      data: {
+        ...data,
+        createdById: userId,
+        updatedById: userId,
+      },
+    });
   }
 
   findAllEps(params: {
@@ -40,10 +46,14 @@ export class EpsService {
   updateEps(params: {
     where: Prisma.EpsWhereUniqueInput;
     data: UpdateEpsDto;
+    userId: string;
   }): Promise<Eps> {
-    const { where, data } = params;
+    const { where, data, userId } = params;
     return this.prisma.eps.update({
-      data,
+      data: {
+        ...data,
+        updatedById: userId,
+      },
       where,
     });
   }

@@ -9,7 +9,9 @@ import {
   UseGuards,
   ParseUUIDPipe,
   NotFoundException,
+  Req,
 } from '@nestjs/common';
+import type { Request } from 'express';
 import { EpsService } from './eps.service';
 import { EpsEntity } from './entities/ep.entity';
 import { CreateEpDto } from './dto/create-ep.dto';
@@ -31,8 +33,9 @@ export class EpsController {
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiCreatedResponse({ type: EpsEntity })
-  async create(@Body() createEpDto: CreateEpDto) {
-    const createdEps = await this.epsService.createEps(createEpDto);
+  async create(@Req() req: Request, @Body() createEpDto: CreateEpDto) {
+    const user = req.user as { id: string };
+    const createdEps = await this.epsService.createEps(createEpDto, user.id);
     return new EpsEntity(createdEps);
   }
 
@@ -65,11 +68,14 @@ export class EpsController {
   @ApiOkResponse({ type: EpsEntity })
   async update(
     @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: Request,
     @Body() updateEpsDto: UpdateEpsDto,
   ) {
+    const user = req.user as { id: string };
     const updatedEps = await this.epsService.updateEps({
       where: { id },
       data: updateEpsDto,
+      userId: user.id,
     });
     return new EpsEntity(updatedEps);
   }
